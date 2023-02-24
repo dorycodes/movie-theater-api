@@ -31,17 +31,28 @@ router.route('/shows/:id')
         res.status(404).send('No show found')
     }
 })
-.put( async (req, res) => {
-    const { title, genre, rating, status} = req.body
-    const updatedShow = await Show.update({
-        title,
-        genre,
-        rating,
-        status
-    },{
-        where: {id: request.params.id}
-    })
-    res.send('Updated user')
+router.put('/show-router/:show', async (req, res) => {
+    try {
+        const { title, genre, rating, status} = req.body
+        const updatedShow = await Show.update({
+            title,
+            genre,
+            rating,
+            status
+        },{
+            where: {id: request.params.id}
+        })
+            res.send('Updated user')
+            if (updatedShow[0] === 1) {
+                const updatedShow = await Show.findByPk(req.params.id);
+                console.log('Successfully updated Show: ', updatedShow);
+                res.json(updatedShow);
+            } else {
+                res.status(404).json({ error: 'Show not found' });
+                }
+    } catch (error) {
+
+    }
 })
 .delete(async (req, res) => {
     try {

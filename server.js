@@ -7,6 +7,7 @@ const showRouter = require('./router/show-router')
 app.use(express.json())
 
 app.use(showRouter)
+app.use('/shows/:show', showRouter)
 
 app.listen(port, () => {
   db.sync()
