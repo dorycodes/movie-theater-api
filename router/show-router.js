@@ -19,6 +19,7 @@ router.route('/shows')
         rating,
         status
     })
+    res.send(newShow)
 })
 
 router.route('/shows/:id')
@@ -30,7 +31,7 @@ router.route('/shows/:id')
         res.status(404).send('No show found')
     }
 })
-.put(async (req, res) => {
+.put( async (req, res) => {
     const { title, genre, rating, status} = req.body
     const updatedShow = await Show.update({
         title,
@@ -42,5 +43,31 @@ router.route('/shows/:id')
     })
     res.send('Updated user')
 })
-
+.delete(async (req, res) => {
+    try {
+        let show = await Show.findByPk(req.params.id)
+        if(!show) {
+            res.status(404).send('Could not find show')
+        }
+        await show.destroy()
+        res.send({message: 'Show successfully deleted'})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            error: 'Internal server error'
+        })
+    }
+})
+router.get('/shows/:genre', async (req, res) => {
+    try {
+        let show = await Show.findAll({
+            where: {
+                genre: req.params.genre
+            }
+        })
+        res.send(show)
+    } catch (error) {
+        res.status(404).send('Show not found')
+    }
+})
 module.exports = router;
